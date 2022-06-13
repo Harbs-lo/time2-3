@@ -36,12 +36,19 @@ export default {
   },
   methods: {
     salvar() {
-      const novo_id = uuidv4();
-      this.times.push({
-        id: novo_id,
-        nome: this.novo_time,
-        estadio: this.novo_estadio,
-      });
+      if (this.novo_time !== "") {
+        const novo_id = uuidv4();
+        this.times.push({
+          id: novo_id,
+          nome: this.novo_time,
+          estadio: this.novo_estadio,
+        });
+        this.novo_time = "";
+      }
+    },
+    excluir(time) {
+      const indice = this.times.indexOf(time);
+      this.times.splice(indice, 1);
     },
   },
 };
@@ -71,7 +78,10 @@ export default {
             <tr v-for="time in times" :key="time.id">
               <td>{{ time.id }}</td>
               <td>{{ time.nome }}</td>
-              <td>??</td>
+              <td>
+                <button>Editar</button>
+                <button @click="excluir(time)">Excluir</button>
+              </td>
               <td>{{ time.estadio }}</td>
             </tr>
           </tbody>
@@ -109,8 +119,8 @@ export default {
   border: 1px solid rgb(211, 211, 211);
   border-radius: 10px;
   background-color: rgb(227, 170, 0);
-  color: rgb(255, 255, 255);
   font-weight: bold;
+  color: black;
   cursor: pointer;
 }
 
@@ -125,8 +135,11 @@ export default {
   border-collapse: collapse;
 }
 
-table tr td {
-  border: 1px solid rgb(211, 211, 211);
+table,
+tr,
+th,
+td {
+  border: 2px solid black;
   padding: 10px;
 }
 </style>
