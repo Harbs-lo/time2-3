@@ -9,7 +9,7 @@ export default {
     };
   },
   async created(){
-    const times = await axios.get("http://locashost:4000/times");
+    const times = await axios.get("http://localhost:4000/times");
     this.times = times.data;
   },
   methods: {
