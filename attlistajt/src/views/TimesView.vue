@@ -1,11 +1,10 @@
 <script>
-import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 export default {
   data() {
     return {
       times: [],
-      novo_time: "",
+      nova_cidade: [],
     };
   },
   async created(){
@@ -16,6 +15,7 @@ export default {
     async salvar() {
       const time = {
         nome: this.novo_time,
+        cidade: this.nova_cidade
       };
       const time_criado = await axios.post("http://localhost:4000/times", time);
       this.times.push(time_criado.data);
@@ -37,6 +37,7 @@ export default {
       </div>
       <div class="form-input">
         <input type="text" v-model="novo_time" />
+        <input type="text" v-model="nova_cidade" />
         <button @click="salvar">Salvar</button>
       </div>
       <div class="list-times">
@@ -45,6 +46,7 @@ export default {
             <tr>
               <th>ID</th>
               <th>Nome</th>
+              <th>cidade</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -52,11 +54,12 @@ export default {
             <tr v-for="time in times" :key="time.id">
               <td>{{ time.id }}</td>
               <td>{{ time.nome }}</td>
+              <td>{{ time.cidade }}</td>
               <td>
                 <button>Editar</button>
                 <button @click="excluir(time)">Excluir</button>
               </td>
-              <td>{{ time.estadio }}</td>
+            
             </tr>
           </tbody>
         </table>
