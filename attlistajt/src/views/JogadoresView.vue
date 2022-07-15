@@ -57,7 +57,7 @@
             <tr v-for="jogador in jogadores" :key="jogador.id">
               <td>{{ jogador.id }}</td>
               <td>{{ jogador.nome }}</td>
-              <td>{{ jogador.time.nome }}</td>
+              <td>{{ jogador.time.nome }} ({{ jogador.time.cidade}})</td>
               <td>??</td>
             </tr>
           </tbody>

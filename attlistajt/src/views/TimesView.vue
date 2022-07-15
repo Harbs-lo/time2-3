@@ -7,7 +7,7 @@ export default {
       nova_cidade: [],
     };
   },
-  async created(){
+  async created() {
     const times = await axios.get("http://localhost:4000/times");
     this.times = times.data;
   },
@@ -15,15 +15,25 @@ export default {
     async salvar() {
       const time = {
         nome: this.novo_time,
-        cidade: this.nova_cidade
+        cidade: this.nova_cidade,
       };
       const time_criado = await axios.post("http://localhost:4000/times", time);
       this.times.push(time_criado.data);
     },
     async excluir(time) {
-      await axios.delete(`http://localhost:4000/times/${time.id}`);
+      await axios.delete(`http://localhost:4000/times/${time.id}`, time);
       const indice = this.times.indexOF(time);
       this.times.splice(indice, 1);
+    },
+    editar(time) {
+      Object.assign(this.time, time);
+    },
+    async atualizarTime(time) {
+      const response = await axios.put(
+        `http://localhost:4000/times/${time.id}`,
+        time
+      );
+      return response.data;
     },
   },
 };
@@ -36,8 +46,8 @@ export default {
         <h2>Gerenciamento de Times</h2>
       </div>
       <div class="form-input">
-        <input type="text" v-model="novo_time" />
-        <input type="text" v-model="nova_cidade" />
+        <input type="text" v-model="novo_time" placeholder="Time" />
+        <input type="text" v-model="nova_cidade" placeholder="Cidade" />
         <button @click="salvar">Salvar</button>
       </div>
       <div class="list-times">
@@ -56,10 +66,9 @@ export default {
               <td>{{ time.nome }}</td>
               <td>{{ time.cidade }}</td>
               <td>
-                <button>Editar</button>
+                <button @click="editar_time(time)">Editar</button>
                 <button @click="excluir(time)">Excluir</button>
               </td>
-            
             </tr>
           </tbody>
         </table>
@@ -82,7 +91,7 @@ export default {
 }
 
 .form-input input {
-  width: 60%;
+  width: 50px;
   height: 40px;
   border: 1px solid rgb(147, 147, 147);
   border-radius: 10px;
