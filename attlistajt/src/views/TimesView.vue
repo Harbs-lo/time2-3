@@ -1,39 +1,32 @@
 <script>
-import axios from "axios";
+import TimesApi from "@/api/times.js";
+const timesApi = new TimesApi();
 export default {
   data() {
     return {
+      time: {},
       times: [],
-      nova_cidade: [],
     };
   },
   async created() {
-    const times = await axios.get("http://localhost:4000/times");
-    this.times = times.data;
+    this.times = await timesApi.buscarTodosOsTimes();
   },
   methods: {
     async salvar() {
-      const time = {
-        nome: this.novo_time,
-        cidade: this.nova_cidade,
-      };
-      const time_criado = await axios.post("http://localhost:4000/times", time);
-      this.times.push(time_criado.data);
+      if (this.time.id) {
+        await timesApi.atualizarTime(this.time);
+      } else {
+        await timesApi.adicionarTime(this.time);
+      }
+      this.times = await timesApi.buscarTodosOsTimes();
+      this.time = {};
     },
     async excluir(time) {
-      await axios.delete(`http://localhost:4000/times/${time.id}`, time);
-      const indice = this.times.indexOF(time);
-      this.times.splice(indice, 1);
+      await timesApi.excluirTime(time.id);
+      this.times = await timesApi.buscarTodosOsTimes();
     },
     editar(time) {
       Object.assign(this.time, time);
-    },
-    async atualizarTime(time) {
-      const response = await axios.put(
-        `http://localhost:4000/times/${time.id}`,
-        time
-      );
-      return response.data;
     },
   },
 };
@@ -46,9 +39,9 @@ export default {
         <h2>Gerenciamento de Times</h2>
       </div>
       <div class="form-input">
-        <input type="text" v-model="novo_time" placeholder="Time" />
-        <input type="text" v-model="nova_cidade" placeholder="Cidade" />
-        <button @click="salvar">Salvar</button>
+        <input type="text" v-model="time.nome" placeholder="Time" />
+        <input type="text" v-model="time.cidade" placeholder="Cidade" />
+        <button @click="salvar">Adicionar</button>
       </div>
       <div class="list-times">
         <table>
@@ -66,7 +59,7 @@ export default {
               <td>{{ time.nome }}</td>
               <td>{{ time.cidade }}</td>
               <td>
-                <button @click="editar_time(time)">Editar</button>
+                <button @click="editar(time)">Editar</button>
                 <button @click="excluir(time)">Excluir</button>
               </td>
             </tr>
